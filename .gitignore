@@ -1,0 +1,47 @@
+# Специфични за компилацията на C++ и CMake
+build/
+bin/
+lib/
+CMakeCache.txt
+CMakeFiles/
+CMakeMembers
+Makefile
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+
+# Изпълними файлове и обектни файлове
+HiddenTreasuresBG
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# Локални настройки на среди за разработка (IDEs)
+.vscode/
+.idea/
+*.user
+*.suo
+*.userossc
+*.sln
+*.vcxproj
+*.filters
+
+# Системни файлове
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Документи за архитектура и анализ
+docs/architecture.md
+docs/analysis.md
