@@ -89,6 +89,14 @@
             color: var(--accent-green);
         }
 
+        .card-sequence h2 {
+            color: #a78bfa;
+        }
+
+        .card-activity h2 {
+            color: #fb923c;
+        }
+
         .diagram-wrapper {
             background-color: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
@@ -96,6 +104,25 @@
             display: flex;
             justify-content: center;
             overflow-x: auto;
+        }
+
+        .diagram-note {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 3px solid #475569;
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .diagram-note code {
+            background: rgba(255,255,255,0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #7dd3fc;
         }
 
         .footer {
@@ -190,13 +217,13 @@ graph LR
     classDef case fill:#1e293b,stroke:#334155,stroke-width:2px,color:#f8fafc;
 
     User((Потребител)):::actor
-    
-    UC1(Разглеждане на населени места):::case
-    UC2(Търсене на обект по категория):::case
-    UC3(Преглед на детайли за обект):::case
-    UC4(Добавяне на ново населено място):::case
-    UC5(Добавяне на нов обект):::case
-    
+
+    UC1(Разглеждане на всички места):::case
+    UC2(Преглед на детайли за обект):::case
+    UC3(Добавяне на населено място):::case
+    UC4(Добавяне на нов обект):::case
+    UC5(Изход от системата):::case
+
     User --> UC1
     User --> UC2
     User --> UC3
@@ -204,6 +231,69 @@ graph LR
     User --> UC5
                 </pre>
             </div>
+            <p class="diagram-note">Потребителят взаимодейства с пет основни функционалности. Разделянето между разглеждане и добавяне показва, че системата поддържа два режима — четене и запис.</p>
+        </div>
+
+        <div class="card card-sequence">
+            <h2>3. UML Диаграма на Последователността (Sequence Diagram)</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Илюстрира комуникацията между обектите при сценария „Преглед на забележителности по населено място".</p>
+            <div class="diagram-wrapper">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Потребител
+    participant Application
+    participant Village
+    participant PlaceOfInterest
+
+    Потребител->>Application: Стартира програмата
+    Application->>Application: seedData()
+    Application-->>Потребител: Показва главното меню
+
+    Потребител->>Application: Избира опция 2
+    Application->>Application: listVillages()
+    Application-->>Потребител: Показва списък с места
+
+    Потребител->>Application: Въвежда номер на населено място
+    Application->>Village: displayAllPlaces()
+    loop За всеки обект в списъка
+        Village->>PlaceOfInterest: displayInfo()
+        PlaceOfInterest-->>Потребител: Извежда информация
+    end
+
+    Потребител->>Application: Избира опция 5
+    Application-->>Потребител: Довиждане!
+                </pre>
+            </div>
+            <p class="diagram-note">Ключов момент е <code>loop</code> блокът — <strong>Village</strong> итерира по своя вектор и чрез <strong>полиморфизъм</strong> извиква конкретния <code>displayInfo()</code> на всеки наследник на <code>PlaceOfInterest</code>.</p>
+        </div>
+
+        <div class="card card-activity">
+            <h2>4. UML Диаграма на Дейностите (Activity Diagram)</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Показва логиката и разклоненията при сценария „Добавяне на нов обект" — от вход на потребителя до финалното записване.</p>
+            <div class="diagram-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    A([Старт]) --> B[Показване на менюто]
+    B --> C{Опция 4 избрана?}
+    C -- Не --> B
+    C -- Да --> D[Списък с населените места]
+    D --> E[Потребителят въвежда номер]
+    E --> F{Валиден номер?}
+    F -- Не --> G[Грешка] --> B
+    F -- Да --> H[Въвежда: Ime, Описание, Координати]
+    H --> I{Тип на обекта?}
+    I -- Културен ресурс --> J[Въвежда: Век и Тип]
+    I -- Природен ресурс --> K[Въвежда: Формация и Защитеност]
+    I -- Туристическа атракция --> L[Въвежда: Такса и Рейтинг]
+    J --> M[Създава обект чрез make unique]
+    K --> M
+    L --> M
+    M --> N[Добавя обекта към Village]
+    N --> O[Съобщение за успех]
+    O --> B
+                </pre>
+            </div>
+            <p class="diagram-note">Разклонението „Тип на обекта?" отразява директно полиморфизма в кода — в зависимост от избора се инстанцира <code>CulturalResource</code>, <code>NaturalResource</code> или <code>TouristAttraction</code>.</p>
         </div>
     </div>
 
@@ -212,5 +302,6 @@ graph LR
     </div>
 
 </body>
+
 
 </html>
